@@ -1,8 +1,10 @@
 {
   "expo": {
-    "name": "WellNest",
-    "slug": "WellNest",
+    "name": "wellnest",
+    "slug": "wellnest",
     "version": "1.0.0",
+    "scheme": "wellnest",
+    "sdkVersion": "53.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
