@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   ScrollView,
@@ -18,7 +18,6 @@ export default function ReportScreen() {
   const [manualLocation, setManualLocation] = useState('');
   const [evidence, setEvidence] = useState(null);
 
-  // Added states for inputs to capture user data
   const [fullName, setFullName] = useState('');
   const [age, setAge] = useState('');
   const [gender, setGender] = useState('');
@@ -30,6 +29,17 @@ export default function ReportScreen() {
   const [condition, setCondition] = useState('');
   const [visibleInjuries, setVisibleInjuries] = useState('');
   const [injuryDescription, setInjuryDescription] = useState('');
+
+  // 🔁 Auto-fetch location on screen load
+  useEffect(() => {
+    (async () => {
+      let { status } = await Location.requestForegroundPermissionsAsync();
+      if (status === 'granted') {
+        let loc = await Location.getCurrentPositionAsync({});
+        setLocation(loc.coords);
+      }
+    })();
+  }, []);
 
   const fetchLocation = async () => {
     let { status } = await Location.requestForegroundPermissionsAsync();
@@ -50,9 +60,7 @@ export default function ReportScreen() {
     }
   };
 
-  // Submit handler
   const handleSubmit = () => {
-    // Simple validation: check required fields
     if (!age.trim()) {
       Alert.alert('Validation error', 'Please enter approximate age or age range.');
       return;
@@ -85,7 +93,7 @@ export default function ReportScreen() {
       Alert.alert('Validation error', 'Please specify if there are visible injuries (Yes / No).');
       return;
     }
-    // All validations passed, prepare data object
+
     const reportData = {
       fullName: fullName.trim() || 'Unknown',
       age: age.trim(),
@@ -105,12 +113,8 @@ export default function ReportScreen() {
       submittedAt: new Date().toISOString(),
     };
 
-    // Here you would send reportData to your backend / API
-
-    // For now, just show success alert
     Alert.alert('Report submitted', 'Thank you for submitting the report.');
 
-    // Reset all form fields
     setFullName('');
     setAge('');
     setGender('');
@@ -148,7 +152,6 @@ export default function ReportScreen() {
           onChangeText={setAge}
           keyboardType="numeric"
         />
-
         <Text style={styles.radioLabel}>Gender</Text>
         <RadioButton.Group onValueChange={value => setGender(value)} value={gender}>
           <View style={styles.radioRow}>
